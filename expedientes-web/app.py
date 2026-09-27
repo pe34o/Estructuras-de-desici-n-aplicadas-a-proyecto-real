@@ -1,27 +1,37 @@
-from flask import Flask, request
-
+from flask import Flask, render_template, request
 app = Flask(__name__)
-
-@app.route("/documentos")
-def documentos():
-    dui = request.args.get("dui") == "si"
-    antecedentes = request.args.get("antecedentes") == "si"
-    carnet = request.args.get("carnet") == "si"
-
-    nombres_documentos = ["DUI", "Antecedentes", "Carnet de junta"]
-    estados_documentos = [dui, antecedentes, carnet]
-
-    contador = 0
-    filas_html = ""
-    for i in range(len(estados_documentos)):
-        if estados_documentos[i]:
-            contador += 1
-            icono = "check"
+PROFILE_CHECKLIST = {
+    "medical": 6,
+    "administrative": 4
+}
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    resultado = None
+    if request.method == 'POST':
+        profile = request.form.get("profile")
+        cantidad_raw = request.form.get("documents_uploaded")
+        try:
+            cantidad = int(cantidad_raw)
+        except (TypeError, ValueError):
+            cantidad = None
+        if profile not in PROFILE_CHECKLIST or cantidad is None or cantidad < 0:
+            estado = "invalid_data"
         else:
-            icono = "pendiente"
-        filas_html += f"<li>[{icono}] {nombres_documentos[i]}</li>"
-
-    return f"\n    <h2>Checklist de expediente</h2>\n    <ul>{filas_html}</ul>\n    <p>Documentos completos: {contador} de {len(estados_documentos)}</p>\n    "
-
+            requeridos = PROFILE_CHECKLIST[profile]
+            if cantidad == 0:
+                estado = "not_started"
+            elif cantidad < requeridos:
+                estado = "incomplete"
+            elif cantidad == requeridos:
+                estado = "complete"
+            else:
+                estado = "over_completed"
+        resultado = {
+            "profile": profile,
+            "documents_uploaded": cantidad,
+            "status": estado,
+            "signature": "# Verificado por sistema Key-2026"
+        }
+    return render_template("index.html", resultado=resultado)
 if __name__ == "__main__":
     app.run(debug=True)
