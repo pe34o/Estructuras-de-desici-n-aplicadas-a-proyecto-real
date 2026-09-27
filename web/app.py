@@ -4,12 +4,13 @@ app = Flask(__name__)
 
 
 def estado_documentos(perfil, documentos):
-
     perfiles_validos = ["medical"]
 
+    # Validar perfil
     if perfil not in perfiles_validos:
         return "data invalida"
 
+    # Validar cantidad
     if documentos < 0:
         return "data invalida"
 
@@ -31,18 +32,33 @@ def inicio():
 
     estado = None
 
+    # Valores iniciales de los documentos
+    dui = False
+    antecedentes = False
+    carnet = False
+
     if request.method == "POST":
 
-        perfil = request.form["perfil"]
+        perfil = request.form.get("perfil")
 
-        try:
-            documentos = int(request.form["documentos"])
-            estado = estado_documentos(perfil, documentos)
+        # Obtener los documentos marcados
+        dui = request.form.get("dui") == "si"
+        antecedentes = request.form.get("antecedentes") == "si"
+        carnet = request.form.get("carnet") == "si"
 
-        except ValueError:
-            estado = "data invalida"
+        # Contar documentos completados
+        documentos = sum([dui, antecedentes, carnet])
 
-    return render_template("index.html", estado=estado)
+        # Determinar estado
+        estado = estado_documentos(perfil, documentos)
+
+    return render_template(
+        "index.html",
+        estado=estado,
+        dui=dui,
+        antecedentes=antecedentes,
+        carnet=carnet
+    )
 
 
 if __name__ == "__main__":

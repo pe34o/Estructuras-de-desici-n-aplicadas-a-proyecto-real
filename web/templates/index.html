@@ -1,41 +1,352 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <title>Estado de documentos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gestión de Documentos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .contenedor {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .descripcion {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .seccion {
+            margin-bottom: 25px;
+        }
+
+        label.titulo {
+            display: block;
+            font-weight: bold;
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .documentos {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .documento {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .documento:hover {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .documento input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .boton {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .boton:hover {
+            background: #1d4ed8;
+        }
+
+        .resultado {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .resultado h2 {
+            color: #1e3a8a;
+            margin-bottom: 15px;
+        }
+
+        .lista {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .lista li {
+            padding: 12px;
+            border-radius: 8px;
+            background: white;
+            border: 1px solid #e2e8f0;
+        }
+
+        .estado {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .completo {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .incompleto {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .no-comenzado {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .invalido {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .excedido {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+
+        .icono {
+            font-size: 20px;
+            margin-right: 5px;
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>Estado de documentos médicos</h1>
+    <div class="contenedor">
 
-    <form method="POST">
+        <h1>📋 Gestión de Documentos</h1>
 
-        <label>Perfil:</label>
-        <input type="text" name="perfil" placeholder="medical" required>
-
-        <br><br>
-
-        <label>Cantidad de documentos:</label>
-        <input type="number" name="documentos" required>
-
-        <br><br>
-
-        <button type="submit">Consultar estado</button>
-
-    </form>
-
-    {% if estado %}
-
-        <h2>Resultado:</h2>
-
-        <p>
-            Estado: <strong>{{ estado }}</strong>
+        <p class="descripcion">
+            Verifica el estado del expediente médico
         </p>
 
-    {% endif %}
+        <form method="POST">
+
+            <!-- PERFIL -->
+            <div class="seccion">
+
+                <label class="titulo" for="perfil">
+                    Selecciona el perfil
+                </label>
+
+                <select name="perfil" id="perfil" required>
+
+                    <option value="">
+                        -- Selecciona un perfil --
+                    </option>
+
+                    <option value="medical">
+                        Medical
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- DOCUMENTOS -->
+            <div class="seccion">
+
+                <label class="titulo">
+                    Documentos disponibles
+                </label>
+
+                <div class="documentos">
+
+                    <label class="documento">
+
+                        <input
+                            type="checkbox"
+                            name="dui"
+                            value="si"
+                        >
+
+                        <span>
+                            🪪 DUI
+                        </span>
+
+                    </label>
+
+
+                    <label class="documento">
+
+                        <input
+                            type="checkbox"
+                            name="antecedentes"
+                            value="si"
+                        >
+
+                        <span>
+                            📄 Antecedentes
+                        </span>
+
+                    </label>
+
+
+                    <label class="documento">
+
+                        <input
+                            type="checkbox"
+                            name="carnet"
+                            value="si"
+                        >
+
+                        <span>
+                            🎫 Carnet de junta
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- BOTÓN -->
+            <button class="boton" type="submit">
+                Verificar expediente
+            </button>
+
+        </form>
+
+
+        {% if estado %}
+
+        <div class="resultado">
+
+            <h2>📋 Checklist del expediente</h2>
+
+            <ul class="lista">
+
+                <li>
+                    {% if dui %}
+                        <span class="icono">✅</span>
+                        DUI
+                    {% else %}
+                        <span class="icono">⏳</span>
+                        DUI — Pendiente
+                    {% endif %}
+                </li>
+
+
+                <li>
+                    {% if antecedentes %}
+                        <span class="icono">✅</span>
+                        Antecedentes
+                    {% else %}
+                        <span class="icono">⏳</span>
+                        Antecedentes — Pendiente
+                    {% endif %}
+                </li>
+
+
+                <li>
+                    {% if carnet %}
+                        <span class="icono">✅</span>
+                        Carnet de junta
+                    {% else %}
+                        <span class="icono">⏳</span>
+                        Carnet de junta — Pendiente
+                    {% endif %}
+                </li>
+
+            </ul>
+
+
+            <!-- ESTADO GENERAL -->
+            <div class="estado
+                {% if estado == 'completo' %}
+                    completo
+                {% elif estado == 'incompleto' %}
+                    incompleto
+                {% elif estado == 'no comenzado' %}
+                    no-comenzado
+                {% elif estado == 'data invalida' %}
+                    invalido
+                {% elif estado == 'cantidad de archivos excedida' %}
+                    excedido
+                {% endif %}
+            ">
+
+                Estado: {{ estado }}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
 
 </body>
 
 </html>
+```
