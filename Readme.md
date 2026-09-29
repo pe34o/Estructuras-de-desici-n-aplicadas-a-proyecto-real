@@ -31,4 +31,4 @@ Sí, la lógica que implementamos en la Semana 6 solo manejaba validaciones bool
 Se maneja como **`invalid_data`** en el bloque `else` final o de validación de entrada, en caso de recibir valores negativos en la cantidad de documentos o cuando el parámetro de `profile` no coincida con los roles autorizados (`medical` o `administrative`).
 
 ---
-### **Pruebas:**
+### **Pruebas:** https://docs.google.com/document/d/1WTyAk5acbiVEJr7ffShtyHQ_9iPPE6a1NYvNKZ2jGeM/edit?usp=sharing
