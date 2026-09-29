@@ -1,34 +1,34 @@
-# **Levantamiento de requerimientos de la logica de decision**
+# **Levantamiento de requerimientos de la lógica de decisión**
 
-### **¿Cuales son los estados posibles reales del dato que van a evaluar?**
+### **¿Cuáles son los estados posibles reales del dato que van a evaluar?**
 
-1. **`invalid_data`**: Estado de excepcion para manejar datos de entrada incorrectos, como registrar un numero negativo de documentos subidos(`uploaded_documents<0`) o ingresar un perfil que no existe en el sistema.
-2. **`not_started`**: El expediente esta en cero; no se h subido ningun documento al sistema(`uploaded_documents == 0`).
-3. **`incomplete`**: El expediente ya tiene archivos cargados, pero aun no alcanza la cantidad total requerida por el checklist del perfil, o le falta la licencia requerida al perfil médico (`medical`).
-4. **`expired_license`**: El checklist de documentos ya se completó o se superó, pero el carnet de la Junta de Vigilancia se encuentra vencido (`days_to_expire <= 0`).
-5. **`complete`**: Se entregó exactamente la cantidad de documentos solicitados según la plantilla del perfil y la licencia del profesional está al día.
-6. **`over_completed`**: Se han subido más documentos de los requeridos por el perfil y la licencia está vigente.
+1. **`invalid_data`** (`data invalida`): Estado de excepción para manejar datos de entrada incorrectos o perfiles no reconocidos en el sistema.
+2. **`not_started`** (`no comenzado`): El expediente está en cero; no se ha marcado ningún documento en el sistema (`uploaded_documents == 0`).
+3. **`incomplete`** (`incompleto`): El expediente ya tiene archivos cargados (`uploaded_documents > 0`), pero aún no alcanza la totalidad de documentos requeridos por el checklist del perfil o falta algún documento obligatorio.
+4. **`expired_license`**: Estado aplicable cuando la licencia/carnet de la Junta de Vigilancia del perfil médico se encuentra vencida (`days_to_expire <= 0`).
+5. **`complete`** (`completo`): Se entregaron los documentos requeridos según la plantilla del perfil y las validaciones requeridas están al día.
+6. **`over_completed`** (`cantidad de archivos excedida`): Estado para clasificar escenarios donde la cantidad de documentos cargados supera el número de requerimientos solicitados por la plantilla del perfil.
 
 ---
 
 ### **¿Qué valor o condición de la ficha define cada estado?**
 
-* **`profile`**: Define la plantilla de evaluación según el puesto del empleado. Si es `medical` se exigen 6 documentos más la validación de su licencia; si es `administrative` se requieren 4 documentos.
-* **`uploaded_documents`**: Variable entera que representa el total de documentos adjuntados en el sistema.
-* **`has_license`**: Indicador de si el personal médico presentó su licencia de la Junta de Vigilancia.
-* **`days_to_expire`**: Días restantes de vigencia del carnet (`days_to_expire <= 0` implica que el carnet está vencido).
+* **`profile`** (`perfil`): Define la plantilla de evaluación según el puesto del empleado (en el formulario actual, `medical`).
+* **`uploaded_documents`**: Suma total de documentos marcados en el formulario (`dui`, `antecedentes`, `carnet`).
+* **`dui`**, **`antecedentes`**, **`carnet`**: Indicadores individuales (booleanos/flags) que determinan si cada documento del checklist fue presentado o está pendiente.
+* **`days_to_expire`**: Días restantes de vigencia de la licencia/carnet de la Junta de Vigilancia (`days_to_expire <= 0` indica carnet vencido).
 
 ---
 
 ### **¿Hay reglas de negocio confirmadas en la ficha que aún no están reflejadas en la lógica de la Semana 6?**
 
-Sí, la lógica que implementamos en la Semana 6 solo manejaba validaciones booleanas sencillas de incompletitud y vencimiento de carnet. Para esta entrega estamos integrando el checklist dinámico de la ficha de RRHH que varía la cuota de documentos según el perfil (`medical` con 6 vs. `administrative` con 4), además de clasificar los casos donde hay exceso de documentos (`over_completed`) o error en los datos (`invalid_data`).
+Sí. La lógica de la Semana 6 solo manejaba validaciones booleanas básicas. Para esta entrega se integran formalmente los estados requeridos por la vista y plantilla Jinja2 (`completo`, `incompleto`, `no comenzado`, `data invalida` y `cantidad de archivos excedida`), permitiendo evaluar dinámicamente el checklist del expediente según el perfil seleccionado y el desglose de documentos (DUI, Antecedentes y Carnet de junta).
 
 ---
 
 ### **¿Qué pasa si el dato no encaja en ningún estado esperado?**
 
-Se maneja como **`invalid_data`** en el bloque `else` final o de validación de entrada, en caso de recibir valores negativos en la cantidad de documentos o cuando el parámetro de `profile` no coincida con los roles autorizados (`medical` o `administrative`).
+Se evalúa como **`invalid_data`** (`data invalida`) en el bloque `else` o de validación inicial, por ejemplo, si se recibe un perfil no autorizado en la opción del formulario o si los parámetros de entrada no corresponden a los formatos aceptados.
 
 ---
 ### **Pruebas:** https://docs.google.com/document/d/1WTyAk5acbiVEJr7ffShtyHQ_9iPPE6a1NYvNKZ2jGeM/edit?usp=sharing
