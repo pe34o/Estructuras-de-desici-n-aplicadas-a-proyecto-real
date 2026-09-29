@@ -30,5 +30,6 @@ Sí. La lógica de la Semana 6 solo manejaba validaciones booleanas básicas. Pa
 
 Se evalúa como **`invalid_data`** (`data invalida`) en el bloque `else` o de validación inicial, por ejemplo, si se recibe un perfil no autorizado en la opción del formulario o si los parámetros de entrada no corresponden a los formatos aceptados.
 
+
 ---
 ### **Pruebas:** https://docs.google.com/document/d/1WTyAk5acbiVEJr7ffShtyHQ_9iPPE6a1NYvNKZ2jGeM/edit?usp=sharing
